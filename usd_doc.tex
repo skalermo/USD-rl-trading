@@ -1,0 +1,144 @@
+\documentclass[12pt,a4paper]{article}
+
+% for polish language
+\usepackage{polski}
+
+% for some math symbols
+\usepackage{amssymb}
+
+% correct footnotes placement
+\usepackage[bottom]{footmisc}
+
+% for \say command
+\usepackage{dirtytalk}
+
+% change title of the bibliography
+\def\bibname{Referencje}\let\refname\bibname
+
+% for advanced math formulas
+\usepackage{mathtools}
+
+\usepackage{listings}
+
+% links
+\usepackage{hyperref}
+% \hypersetup{
+%     colorlinks,
+%     citecolor=black,
+%     filecolor=black,
+%     linkcolor=black,
+%     urlcolor=blue
+% }
+
+% image displaying
+\usepackage{subcaption}
+\usepackage{graphicx}
+
+\usepackage{multirow} 
+\usepackage{makecell}
+
+\title{Dokumentacja do projektu z USD}
+
+\author{Roman Moskalenko \and Pavel Tarashkevich}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Treść zadania}
+
+\textbf{LL1.AnyTrading Stocks}\\
+
+Zapoznaj się z \href{https://github.com/AminHP/gym-anytrading}{gym-anytrading} oraz
+zbiorem danych tam dostępnym:
+
+LL1 - STOCKS\_GOOGL
+
+Przygotuj agenta podejmującego akcje na rynku i uczącego się ze wzmocnieniem
+oraz porównaj jego skuteczność ze strategią losową. Przetestuj co najmniej 2 różne
+algorytmy uczenia ze wzmocnieniem. Przygotuj skrypt umożliwiający wizualizację
+działań wytrenowanego agenta.
+
+\section{Projekt wstępny}
+
+\subsection{Założenia ogólne}
+
+Dla zaimplementowania agenta zajmującego się handlowaniem na rynku mamy
+posłużyć algorytmem uczenia się ze wzmocnieniem (dalej RL). Jako założenie przyjmujemy,
+że środowisko agenta, którym posłużymy się, będzie tylko częściowo odwzorowywać 
+rzeczywiste środowisko rynku. Będzie ono zawierało minimalny zestaw 
+atrybutów, niezbędnych do nauczenia agenta oraz najprostsze akcje 
+(\emph{kup}/\emph{sprzedaj}) do dyspozycji agenta.
+
+Zakładamy, że algorytmy RL sprawdzą się lepiej, niż strategia losowa.
+
+\subsection{Krótki opis przydzielonego środowiska}
+
+W ramach projektu będziemy używać środowiska do symulacji handlowania 
+na rynku akcji podane w treści zadania: \href{https://github.com/AminHP/gym-anytrading}{gym-anytrading}.
+Dane środowisko jest pochodną popularnego środowiska do trenowania agentów
+RL \href{https://github.com/openai/gym}{gym} i zawiera ono podstawowe 
+jego funkcje. Zawiera ono także minimalny zestaw atrybutów opisujących 
+rynek akcji. Ono zawiera specjalną instancję \mbox{\emph{StockEnv}}, 
+która naszym zdaniem najlepiej odwzorowuje środowisko dla naszego 
+zadania.
+
+\subsection{Wybrane algorytmy}
+
+Do realizacji zadania wybraliśmy algorytmy A2C, PPO. Literatura dotycząca
+stosowania algorytmów RL dla trenowania agentów do handlowania na rynku
+akcji wskazuje, że te dwa algorytmy dobrze się sprawdzają
+\cite{ensemble_strat}.
+
+Algorytm A2C (\emph{Advantage Actor-Critic}) bazuje na pomyśle
+wykorzystania sieci neuronowych do aproksymacji polityki agenta (aktor)
+oraz do aproksymacji funkcji wartości (krytyk).
+
+Algorytm PPO (\emph{Proximal Policy Optimization}) rozwija algorytm A2C, 
+wykorzystując specjalne metody do optymalizacji polityki agenta.
+
+\medskip
+
+Porównamy je z algorytmem losowym.
+
+\subsection{Biblioteki wybrane do realizacji projektu}
+
+\begin{itemize}
+  \item \textbf{gym-anytrading} - środowisko do trenowania agentów RL do
+  handlowania na rynku akcji.
+  \item \textbf{\href{https://github.com/notadamking/Stock-Trading-Visualization}{Stock-Trading-Visualization}} - 
+  skrypt do wizualizacji działań agenta oparty o bibliotekę \emph{matplotlib}.
+  \item \textbf{\href{https://github.com/DLR-RM/stable-baselines3}{stable-baselines}} -
+  biblioteka zawierająca gotowe implementację algorytmów RL.
+\end{itemize}
+
+\subsection{Propozycja eksperymentów do przeprowadzenia}
+
+Zamierzamy przeprowadzić trenowanie wybranych modeli stosując różne
+podejścia wyboru podzbioru danych uczących - danych z różnych okresów
+czasowych.
+
+Nie jest oczywiste jak powinna wyglądać strategia nagradzania agenta:
+warto uwzględnić ten fakt, że w handlowaniu na rynku może być większa
+preferencja natychmiastowego zysku, aby móc go potem wykorzystać w 
+późniejszych akcjach agenta. Uwzględnimy to, dostosowując parametr 
+dyskontowania nagród.
+
+W celu ewaluacji działania algorytmów zastosujemy następujące metryki
+m.i. wykorzystane w \cite{ensemble_strat}: \emph{Cumulative return} 
+\emph{Annualized return}, \emph{Annualized volatility}, \emph{Sharpe ratio},
+\emph{Max drawdown}.
+
+\pagebreak
+
+\begin{thebibliography}{9}
+\bibitem{ensemble_strat} 
+Yang, Hongyang and Liu, Xiao-Yang and Zhong, Shan and Walid, Anwar, 
+Deep Reinforcement Learning for Automated Stock Trading: An Ensemble 
+Strategy (September 11, 2020). Available at SSRN: 
+\href{https://ssrn.com/abstract=3690996}{https://ssrn.com/abstract=3690996}
+or \href{http://dx.doi.org/10.2139/ssrn.3690996}{http://dx.doi.org/10.2139/ssrn.3690996}
+\end{thebibliography}
+  
+\end{document}
