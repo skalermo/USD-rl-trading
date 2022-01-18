@@ -9,6 +9,8 @@ import quantstats as qs
 from stable_baselines3 import A2C
 from stable_baselines3.common.vec_env import DummyVecEnv
 
+# from src.stocks_env_custom import StocksEnvCustom
+
 
 def main():
     df = gym_anytrading.datasets.STOCKS_GOOGL.copy()
@@ -23,6 +25,8 @@ def main():
         window_size=window_size,
         frame_bound=(start_index, end_index)
     )
+
+    # env_maker = lambda: StocksEnvCustom(df=df, window_size=window_size, frame_bound=(start_index, end_index))
 
     env = DummyVecEnv([env_maker])
 
