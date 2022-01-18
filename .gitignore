@@ -1,5 +1,6 @@
 .idea/
 venv/
 docs/
+!docs/usd_docs.tex
 **/__pycache__/
 *.html
