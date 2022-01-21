@@ -6,13 +6,24 @@ import matplotlib.pyplot as plt
 
 import quantstats as qs
 
-from stable_baselines3 import A2C
+from stable_baselines3 import A2C, PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
+
+from src.random_agent import RandomAgent
 
 # from src.stocks_env_custom import StocksEnvCustom
 
 
 def main():
+    # total_timesteps = 1_000_000
+    total_timesteps = 1_000
+
+    models = {
+        'RandomAgent': lambda verbose: RandomAgent(env=DummyVecEnv([env_maker]), verbose=verbose),
+        'A2C': lambda verbose: A2C(policy='MlpPolicy', env=DummyVecEnv([env_maker]), verbose=verbose),
+        'PPO': lambda verbose: PPO(policy='MlpPolicy', env=DummyVecEnv([env_maker]), verbose=verbose),
+    }
+
     df = gym_anytrading.datasets.STOCKS_GOOGL.copy()
 
     window_size = 10
@@ -28,11 +39,15 @@ def main():
 
     # env_maker = lambda: StocksEnvCustom(df=df, window_size=window_size, frame_bound=(start_index, end_index))
 
+    runs = 3
+
+    for model_name, model_fn in models.items():
+        for run in range(runs):
+            print(f'{model_name} run {run}')
+            model = model_fn(verbose=1)
+            model.learn(total_timesteps=total_timesteps)
+
     env = DummyVecEnv([env_maker])
-
-    model = A2C('MlpPolicy', env, verbose=1)
-    model.learn(total_timesteps=1000)
-
     env = env_maker()
     observation = env.reset()
 
