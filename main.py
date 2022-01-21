@@ -55,9 +55,6 @@ def run_quantstats(env: gym.Env, test_df: pd.DataFrame, window_size: int, output
 
 
 def main():
-    # total_timesteps = 1_000_000
-    total_timesteps = 100
-
     df = gym_anytrading.datasets.STOCKS_GOOGL.copy()
     train, test = train_test_split(df)
 
@@ -78,6 +75,7 @@ def main():
 
     # env_maker = lambda: StocksEnvCustom(df=df, window_size=window_size, frame_bound=(start_index, end_index))
 
+    total_timesteps = 1_000_000
     runs = 3
     discount_factors = [0.99, 0.9, 0.7]
     window_sizes = [10, 20, 30]
@@ -109,31 +107,31 @@ def main():
                         model = model_fn(verbose=1, discount_factor=discount_factor, window_size=window_size)
                         model.learn(total_timesteps=total_timesteps)
 
-                    print(out.getvalue())
+                    # print(out.getvalue())
                     with open(log_path, 'w') as f:
                         f.write(out.getvalue())
                     model.save(model_path)
 
-    qs.extend_pandas()
-
-    for discount_factor in discount_factors:
-        for window_size in window_sizes:
-            for model_name, _ in models.items():
-                env = env_maker(test, window_size)()
-                returns = []
-                for run in range(runs):
-                    file_name = f'{model_name}_{window_size}_{discount_factor}_0'
-                    model_path = f'{models_dir}/{file_name}.zip'
-                    model = _str_to_class(model_name).load(model_path)
-                    return_ = _test_loop(model, env)
-                    returns.append(return_)
-                    # quantstats_output_path = f'{quantstats_dir}/{file_name}.html'
-                    # run_quantstats(env, test, window_size, quantstats_output_path)
-                print(f'{model_name} returns (on avg): {sum(returns) / runs}')
-
-    # plt.figure(figsize=(16, 6))
-    # env.render_all()
-    # plt.show()
+    # qs.extend_pandas()
+    #
+    # for discount_factor in discount_factors:
+    #     for window_size in window_sizes:
+    #         for model_name, _ in models.items():
+    #             env = env_maker(test, window_size)()
+    #             returns = []
+    #             for run in range(runs):
+    #                 file_name = f'{model_name}_{window_size}_{discount_factor}_0'
+    #                 model_path = f'{models_dir}/{file_name}.zip'
+    #                 model = _str_to_class(model_name).load(model_path)
+    #                 return_ = _test_loop(model, env)
+    #                 returns.append(return_)
+    #                 # quantstats_output_path = f'{quantstats_dir}/{file_name}.html'
+    #                 # run_quantstats(env, test, window_size, quantstats_output_path)
+    #             print(f'{model_name} returns (on avg): {sum(returns) / runs}')
+    #
+    # # plt.figure(figsize=(16, 6))
+    # # env.render_all()
+    # # plt.show()
 
 
 if __name__ == '__main__':
