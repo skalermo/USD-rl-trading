@@ -101,7 +101,7 @@ def main():
                         print(f'Model {model_path} already exists, skipping')
                         continue
                     if model_name == 'RandomAgent':
-                        model = model_fn()
+                        model = model_fn(window_size=window_size)
                         model.save(model_path)
                         continue
 
