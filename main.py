@@ -69,7 +69,7 @@ def main():
     def env_maker(df: pd.DataFrame, window_size: int) -> Callable[[], gym.Env]:
         start_index = window_size
         end_index = len(train)
-        return lambda: gym.make( 'stocks-v0',
+        return lambda: gym.make('stocks-v0',
             df=df,
             window_size=window_size,
             frame_bound=(start_index, end_index)
@@ -84,8 +84,8 @@ def main():
     # env_maker = lambda: StocksEnvCustom(df=df, window_size=window_size, frame_bound=(start_index, end_index))
 
     runs = 3
-    # variable window size?
-    # variable discount_factor?
+    discount_factors = [0.99, 0.9, 0.7]
+    window_sizes = [10, 20, 30]
 
     data_dir = '.data'
     logs_dir = f'{data_dir}/logs'
@@ -100,6 +100,10 @@ def main():
             if os.path.exists(model_path):
                 print(f'Model {model_path} already exists, skipping')
                 continue
+            if model_name == 'RandomAgent':
+                model = model_fn(verbose=False)
+                model.save(model_path)
+                continue
 
             with captured_output() as (out, _):
                 model = model_fn(verbose=1)
@@ -113,8 +117,6 @@ def main():
     qs.extend_pandas()
 
     for model_name, _ in models.items():
-        # if model_name == 'RandomAgent':
-        #     continue
         env = env_maker(test, window_size)()
 
         returns = []
