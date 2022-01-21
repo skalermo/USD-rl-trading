@@ -1,11 +1,11 @@
 import pickle
 
 import numpy as np
-from stable_baselines3.common.vec_env import DummyVecEnv
+import gym
 
 
 class RandomAgent:
-    def __init__(self, env: DummyVecEnv, **kwargs):
+    def __init__(self, env: gym.Env, **kwargs):
         self.env = env
 
     def learn(self, **kwargs) -> None:
