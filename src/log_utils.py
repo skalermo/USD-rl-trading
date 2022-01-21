@@ -16,12 +16,14 @@ def captured_output() -> Generator[Tuple[StringIO, StringIO], None, None]:
 
 
 def chunk_rollouts(logs: str) -> Generator[str, None, None]:
-    while (start := logs.find("rollout")) != -1:
+    start = logs.find("rollout")
+    while start != -1:
         end = logs.find("rollout", start + 1)
         if end == -1:
             end = len(logs)
         yield logs[start:end]
         logs = logs[end:]
+        start = logs.find("rollout")
 
 
 def extract_data(chunk: str) -> dict:
