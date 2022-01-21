@@ -14,6 +14,13 @@ from src.random_agent import RandomAgent
 # from src.stocks_env_custom import StocksEnvCustom
 
 
+def train_test_split(df: pd.DataFrame, split_point: float = 0.8) -> (pd.DataFrame, pd.DataFrame):
+    assert 0.0 <= split_point <= 1.0
+    df_train = df.iloc[:int(len(df) * split_point)]
+    df_test = df.iloc[int(len(df) * split_point):]
+    return df_train, df_test
+
+
 def main():
     # total_timesteps = 1_000_000
     total_timesteps = 1_000
