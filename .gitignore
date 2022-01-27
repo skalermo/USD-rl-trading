@@ -1,4 +1,5 @@
 .idea/
+.data/
 venv/
 docs/
 !docs/usd_docs.tex
