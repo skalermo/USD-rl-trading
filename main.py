@@ -5,10 +5,10 @@ from typing import Callable, Type, Union
 import gym_anytrading
 import gym
 import pandas as pd
-
+import numpy as np
 import quantstats as qs
-
 from stable_baselines3 import A2C, PPO
+from sb3_contrib import RecurrentPPO
 
 from src.random_agent import RandomAgent
 from src.log_utils import captured_output
@@ -20,7 +20,7 @@ def _create_dirs(*paths: str):
     for path in paths:
         if not os.path.isdir(path):
             os.makedirs(path)
-            
+
 
 MODEL_TYPE = Type[Union[A2C, PPO, RandomAgent]]
 
@@ -68,17 +68,22 @@ def main():
         )
 
     models = {
-        'RandomAgent': lambda window_size, *args: RandomAgent(env=env_maker(train, window_size)()),
-        'A2C': lambda verbose, discount_factor, window_size: A2C(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
-        'PPO': lambda verbose, discount_factor, window_size: PPO(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
+        # 'RandomAgent': lambda window_size, *args: RandomAgent(env=env_maker(train, window_size)()),
+        # 'A2C': lambda verbose, discount_factor, window_size: A2C(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
+        # 'PPO': lambda verbose, discount_factor, window_size: PPO(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
+        'RecurrentPPO': lambda verbose, discount_factor, window_size: RecurrentPPO(policy='MlpLstmPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
     }
 
     # env_maker = lambda: StocksEnvCustom(df=df, window_size=window_size, frame_bound=(start_index, end_index))
 
     total_timesteps = 1_000_000
+    # total_timesteps = 1000
     runs = 3
-    discount_factors = [0.99, 0.9, 0.7]
-    window_sizes = [10, 20, 30]
+    # runs = 1
+    # discount_factors = [0.99, 0.9, 0.7]
+    discount_factors = [0.99]
+    window_sizes = [30, 50]
+    # window_sizes = [10]
 
     data_dir = '.data'
     logs_dir = f'{data_dir}/logs'
@@ -120,7 +125,7 @@ def main():
     #             env = env_maker(test, window_size)()
     #             returns = []
     #             for run in range(runs):
-    #                 file_name = f'{model_name}_{window_size}_{discount_factor}_0'
+    #                 file_name = f'{model_name}_{window_size}_{discount_factor}_{run}'
     #                 model_path = f'{models_dir}/{file_name}.zip'
     #                 model = _str_to_class(model_name).load(model_path)
     #                 return_ = _test_loop(model, env)
