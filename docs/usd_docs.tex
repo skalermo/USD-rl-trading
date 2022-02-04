@@ -187,8 +187,15 @@ agenta na danym środowisku. Uczenie przeprowadziliśmy dla różnych zestawów
 parametrów \emph{rozmiaru okna} - zdarzeń historycznych dostępnych agentowi
 w każdym kroku działania (10, 20, 30) oraz \emph{dyskonta} (0.7, 0.9, 0.99).
 
+Po przetestowaniu nauczonych agentów uznaliśmy, że ich sprawność nie
+jest satysfakcjonująca, dlatego też użyliśmy rekurencyjnej wersji
+algorytmu PPO (dla \emph{rozmiaru okna} 30 oraz \emph{dyskonta} 0.99), którą
+pobraliśmy z repozytorium \href{https://github.com/Stable-Baselines-Team/stable-baselines3-contrib/pull/53}
+{stable-baselines3-contrib} (ze względu na brak oficjalnej implementacji
+w bibliotece stable-baselines3).
+
 Uczenie jest dokonane łącznie 3 razy
-dla każdego algorytmu oraz w celu zmniejszenia wpływu
+dla każdego algorytmu w celu zmniejszenia wpływu
 losowości na uzyskane wyniki.
 
 Na rysunku \ref{fig:training} pokazano przebieg uczenia agentów.
@@ -196,11 +203,13 @@ Jak widać sumy nagród uzyskiwane przez agentów dla parametru dyskonta
 równego 0.7 są wyraźnie mniejsze w porównaniu z 0.9 i 0.99. Także widać, że
 rozmiar okna czasowego nie wiele zmienia pod względem efektywności uczenia.
 Charakterystycznym jest ten fakt, że algorytm PPO pokazuje lepszą wydajność,
-niż A2C, czego można było po nim się spodziewać.
+niż A2C, czego można było po nim się spodziewać. Nieco dziwnym jest ten
+fakt, że sumy nagród uzyskiwane przez algorytm rekurencyjny PPO są mniejsze
+od sum nagród uzyskiwanych przez algorytm domyślny.
 
 \begin{figure}[!h]
   \centering
-  \includegraphics[width=0.9\textwidth]{../src/plot0.pdf}
+  \includegraphics[width=0.7\textwidth]{../src/plot0.pdf}
   \caption{Przebieg uczenia agentów w przeciągu 1,000,000 kroków.
     Na wykresie pokazano zakres sum nagród, uzyskany przez
     średnią sumę nagród oraz odchylenia standardowego.}
@@ -219,5 +228,74 @@ niż A2C, czego można było po nim się spodziewać.
   \href{https://ssrn.com/abstract=3690996}{https://ssrn.com/abstract=3690996}
   or \href{http://dx.doi.org/10.2139/ssrn.3690996}{http://dx.doi.org/10.2139/ssrn.3690996}
 \end{thebibliography}
+
+\pagebreak
+\appendix
+\section{Raporty Quantstats \\
+  dla rozmiaru okna 30 oraz dyskonta 0.99}
+
+\begin{figure}[ht!]
+  \centering
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{plots/qs_rand.pdf}
+  \end{subfigure}
+  \hspace{0.05\textwidth}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=2, width=\textwidth]{plots/qs_rand.pdf}
+  \end{subfigure}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=3, width=\textwidth]{plots/qs_rand.pdf}
+  \end{subfigure}
+  \caption{Raport Quantstats dla algorytmu losowego na
+    danych testowych}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{plots/qs_a2c.pdf}
+  \end{subfigure}
+  \hspace{0.05\textwidth}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=2, width=\textwidth]{plots/qs_a2c.pdf}
+  \end{subfigure}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=3, width=\textwidth]{plots/qs_a2c.pdf}
+  \end{subfigure}
+  \caption{Raport Quantstats dla algorytmu A2C na
+    danych testowych}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{plots/qs_ppo.pdf}
+  \end{subfigure}
+  \hspace{0.05\textwidth}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=2, width=\textwidth]{plots/qs_ppo.pdf}
+  \end{subfigure}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=3, width=\textwidth]{plots/qs_ppo.pdf}
+  \end{subfigure}
+  \caption{Raport Quantstats dla algorytmu PPO na
+    danych testowych}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{plots/qs_rppo.pdf}
+  \end{subfigure}
+  \hspace{0.05\textwidth}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=2, width=\textwidth]{plots/qs_rppo.pdf}
+  \end{subfigure}
+  \begin{subfigure}[ht!]{0.45\textwidth}
+    \includegraphics[page=3, width=\textwidth]{plots/qs_rppo.pdf}
+  \end{subfigure}
+  \caption{Raport Quantstats dla algorytmu RecurrentPPO na
+    danych testowych}
+\end{figure}
 
 \end{document}
