@@ -20,9 +20,11 @@ You can train models by running
 python main.py
 ```
 
-## Try it out!
+## Example
 
-You can run simple example script prepared for demonstration purposes. In [.data/models](.data/models) there are some pretrained models which you can use.
+You can run simple example script prepared for demonstration purposes. 
+
+In [.data/models](.data/models) there are some pretrained models which you can use.
 
 ```bash
 python example.py
