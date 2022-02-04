@@ -14,7 +14,7 @@ fig, ax = plt.subplots(nrows=3, ncols=3, figsize=(10, 10))
 log_path = '../.data/logs'
 all_logs = [f'{log_path}/{f}' for f in listdir(log_path) if isfile(join(log_path, f))]
 
-models = ['A2C', 'PPO']
+models = ['A2C', 'PPO', 'RecurrentPPO']
 window_size = [10, 20, 30]
 gamma = [0.7, 0.9, 0.99]
 runs = [0, 1, 2]
@@ -23,7 +23,9 @@ for i, w in enumerate(window_size):
     for j, g in enumerate(gamma):
         for m in models:
             prefix = f'{m}_{w}_{g}'
-            logs = [f for f in all_logs if f'{log_path}/{prefix}' in f]
+            logs = [f for f in all_logs if f'{log_path}/{prefix}' == f.rsplit('_', 1)[0]]
+            if not logs:
+                continue
             processed = []
             for log in logs:
                 with open(log, 'r') as f:
