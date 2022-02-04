@@ -13,8 +13,6 @@ from sb3_contrib import RecurrentPPO
 from src.random_agent import RandomAgent
 from src.log_utils import captured_output
 
-# from src.stocks_env_custom import StocksEnvCustom
-
 
 def _create_dirs(*paths: str):
     for path in paths:
@@ -22,7 +20,7 @@ def _create_dirs(*paths: str):
             os.makedirs(path)
 
 
-MODEL_TYPE = Type[Union[A2C, PPO, RandomAgent]]
+MODEL_TYPE = Type[Union[A2C, PPO, RandomAgent, RecurrentPPO]]
 
 
 def _str_to_class(classname: str) -> MODEL_TYPE:
@@ -44,6 +42,7 @@ def _test_loop(model: MODEL_TYPE, env: gym.Env) -> float:
         action, _ = model.predict(obs)
         observation, reward, done, _ = env.step(action)
         total_reward += reward
+        # env.render()
     return total_reward
 
 
@@ -68,22 +67,16 @@ def main():
         )
 
     models = {
-        # 'RandomAgent': lambda window_size, *args: RandomAgent(env=env_maker(train, window_size)()),
-        # 'A2C': lambda verbose, discount_factor, window_size: A2C(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
-        # 'PPO': lambda verbose, discount_factor, window_size: PPO(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
+        'RandomAgent': lambda window_size, *args: RandomAgent(env=env_maker(train, window_size)()),
+        'A2C': lambda verbose, discount_factor, window_size: A2C(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
+        'PPO': lambda verbose, discount_factor, window_size: PPO(policy='MlpPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
         'RecurrentPPO': lambda verbose, discount_factor, window_size: RecurrentPPO(policy='MlpLstmPolicy', env=env_maker(train, window_size)(), verbose=verbose, gamma=discount_factor),
     }
 
-    # env_maker = lambda: StocksEnvCustom(df=df, window_size=window_size, frame_bound=(start_index, end_index))
-
     total_timesteps = 1_000_000
-    # total_timesteps = 1000
     runs = 3
-    # runs = 1
-    # discount_factors = [0.99, 0.9, 0.7]
     discount_factors = [0.99]
-    window_sizes = [30, 50]
-    # window_sizes = [10]
+    window_sizes = [30]
 
     data_dir = '.data'
     logs_dir = f'{data_dir}/logs'
@@ -112,31 +105,27 @@ def main():
                         model = model_fn(verbose=1, discount_factor=discount_factor, window_size=window_size)
                         model.learn(total_timesteps=total_timesteps)
 
-                    # print(out.getvalue())
                     with open(log_path, 'w') as f:
                         f.write(out.getvalue())
                     model.save(model_path)
 
-    # qs.extend_pandas()
-    #
-    # for discount_factor in discount_factors:
-    #     for window_size in window_sizes:
-    #         for model_name, _ in models.items():
-    #             env = env_maker(test, window_size)()
-    #             returns = []
-    #             for run in range(runs):
-    #                 file_name = f'{model_name}_{window_size}_{discount_factor}_{run}'
-    #                 model_path = f'{models_dir}/{file_name}.zip'
-    #                 model = _str_to_class(model_name).load(model_path)
-    #                 return_ = _test_loop(model, env)
-    #                 returns.append(return_)
-    #                 # quantstats_output_path = f'{quantstats_dir}/{file_name}.html'
-    #                 # run_quantstats(env, test, window_size, quantstats_output_path)
-    #             print(f'{model_name} returns (on avg): {sum(returns) / runs}')
-    #
-    # # plt.figure(figsize=(16, 6))
-    # # env.render_all()
-    # # plt.show()
+    qs.extend_pandas()
+
+    for discount_factor in discount_factors:
+        for window_size in window_sizes:
+            for model_name, _ in models.items():
+                env = env_maker(test, window_size)()
+                returns = []
+                for run in range(runs):
+                    file_name = f'{model_name}_{window_size}_{discount_factor}_{run}'
+                    model_path = f'{models_dir}/{file_name}.zip'
+                    model = _str_to_class(model_name).load(model_path)
+                    for _ in range(10):
+                        return_ = _test_loop(model, env)
+                        returns.append(return_)
+                    quantstats_output_path = f'{quantstats_dir}/{file_name}.html'
+                    run_quantstats(env, test, window_size, quantstats_output_path)
+                print(f'{model_name} gamme={discount_factor} window={window_size} returns (on avg): {np.mean(returns)} +- {np.std(returns)}')
 
 
 if __name__ == '__main__':
