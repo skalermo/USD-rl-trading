@@ -1,7 +1,12 @@
 .idea/
 .data/
 venv/
-docs/
-!docs/usd_docs.tex
 **/__pycache__/
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
 *.html
