@@ -146,6 +146,30 @@ do analizy operacji finansowych. Postanowiliśmy ją wykorzystać, gdyż
 pozwala wyznaczyć metryki wspomniane przez nas w rozdziale
 \ref{exps_proposal}.
 
+\subsection{Opis środowiska gym-anytrading}
+
+Aby mieć możliwość poprawnie interpretować wyniki uczenia i działania
+modeli na danym środowisku musieliśmy zagłębić się w jego strukturę.
+Chcielibyśmy wymienić kilka najważniejszych cech, które zwróciły naszą
+uwagę:
+
+\begin{itemize}
+  \item \textbf{pozycje \emph{Long} i \emph{Short}} -
+        W zarysie: w pozycji \emph{Long} agent chcę kupować akcje, kiedy
+        ceny na nie są niskie, żeby w przyszłości zyskać na wzroście cen,
+        a w pozycji \emph{Short} agent chcę sprzedawać akcje, kiedy ceny
+        są wysokie, aby potem na uzyskane środki kupić akcje kiedy ceny
+        zmaleją, zyskując na różnicy.
+  \item \textbf{nagrody (reward)} - różnica pomiędzy ceną zamknięcia akcji w danej
+        chwili a ceną zamknięcia akcji w chwili ostatniej transakcji
+        (transakcja jest wykonywana w sytuacji kiedy agent miał pozycję
+        \emph{Long} oraz wybrał akcję \emph{Sell}).
+  \item \textbf{zysk (profit)} - jest aktualizowany wraz z każdą
+        transakcją, a jest równy liczbie akcji, które posiadaliśmy podczas
+        ostatniej transakcji, razy aktualna cena zamknięcia akcji.
+
+\end{itemize}
+
 \subsection{Uczenie agentów}
 
 Dane dostępne z biblioteki \textbf{gym-anytrading}, które zostały wykorzystane
