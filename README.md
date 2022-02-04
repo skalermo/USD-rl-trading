@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Python 3.8
+- Python 3.7
 
 ## Installation
 
@@ -14,8 +14,16 @@ pip install -r requirements.txt
 
 ## Running project
 
-You can train models by running. In [.data/models](.data/models) directory you can find trained models - one of each tested algorithm.
+You can train models by running
 
 ```bash
 python main.py
+```
+
+## Try it out!
+
+You can run simple example script prepared for demonstration purposes. In [.data/models](.data/models) there are some pretrained models which you can use.
+
+```bash
+python example.py
 ```
