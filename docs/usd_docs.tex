@@ -125,6 +125,7 @@ preferencja natychmiastowego zysku, aby móc go potem wykorzystać w
 późniejszych akcjach agenta. Uwzględnimy to, dostosowując parametr
 dyskontowania nagród.
 
+\label{metrics}
 W celu ewaluacji działania algorytmów zastosujemy następujące metryki
 m.i. wykorzystane w \cite{ensemble_strat}: \emph{Cumulative return},
 \emph{Annualized return}, \emph{Annualized volatility}, \emph{Sharpe ratio},
@@ -170,6 +171,7 @@ uwagę:
 
 \end{itemize}
 
+\pagebreak
 \subsection{Uczenie agentów}
 
 Dane dostępne z biblioteki \textbf{gym-anytrading}, które zostały wykorzystane
@@ -207,16 +209,72 @@ niż A2C, czego można było po nim się spodziewać. Nieco dziwnym jest ten
 fakt, że sumy nagród uzyskiwane przez algorytm rekurencyjny PPO są mniejsze
 od sum nagród uzyskiwanych przez algorytm domyślny.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=0.7\textwidth]{../src/plot0.pdf}
+  \includegraphics[width=0.8\textwidth]{../src/plot0.pdf}
   \caption{Przebieg uczenia agentów w przeciągu 1,000,000 kroków.
     Na wykresie pokazano zakres sum nagród, uzyskany przez
     średnią sumę nagród oraz odchylenia standardowego.}
   \label{fig:training}
 \end{figure}
 
+\pagebreak
 \subsection{Ewaluacja działania agentów}
+
+Do ewaluacji działania nauczonych agentów każdy z nich przetestowaliśmy
+na danych testowych, wykorzystane metryki z rodziału \ref{metrics}
+uzyskaliśmy za pomocą raportów Quantstats. Wyniki wybranego zbioru
+nauczonych agentów podajemy w tabeli \ref{tab:results}.
+
+Krótki opis tych metryk podany poniżej:
+
+\begin{itemize}
+  \item \textbf{Cumulative return} - zwrot inwestycji na całym okresie czasowym.
+  \item \textbf{Annualized return} - zwrot inwestycji w okresie jednego roku.
+  \item \textbf{Annualized volatility} - miara rozrzutu zwrotów uzyskanych w
+        okresie jednego roku, najczęściej liczona jako odchylenie standardowe
+        zwrotów.
+  \item \textbf{Sharpe ratio} - stosunek różnicy średniego zwrotu i
+        stopy wolnej od ryzyka (w naszym projekcie przyjęliśmy ją równą 0)
+        do wartości \emph{volatility}. \emph{Sharpe ratio} większe od 1
+        zwykle uznawane jest za dobre \cite{sharpe}.
+  \item \textbf{Max drawdown} - największa wartość różnicy między
+        szczytem a kolejnym dołkiem wyrażonej w procentach.
+\end{itemize}
+
+\begin{table}[!h]
+  \hspace*{-1cm}\begin{tabular}{llllll}
+    \hline
+    \multicolumn{1}{c}{} & \multicolumn{1}{c}{Cum. return} & \multicolumn{1}{c}{Ann. return} & \multicolumn{1}{c}{Ann. volatility} & \multicolumn{1}{c}{Sharpe ratio} & \multicolumn{1}{c}{Max drawdown} \\
+    \hline
+    Random               & -71.67\%                        & -49.87\%                        & 15.0\%                              & -4.79                            & -72.23\%                         \\
+    A2C                  & -68.82\%                        & -45.36\%                        & 13.14\%                             & -5.06                            & -68.96\%                         \\
+    PPO                  & \phantom{-}0.74\%               & -0.75\%                         & 14.71\%                             & \phantom{-}0.1                   & -17.72\%                         \\
+    RecPPO               & \phantom{-}14.86\%              & -0.42\%                         & 19.33\%                             & \phantom{-}0.51                  & -23.42\%                         \\
+    \hline
+  \end{tabular}
+  \caption{Wartości metryk sprawności agentów dla danych testowych}
+  \label{tab:results}
+\end{table}
+
+Wyniki te w postaci bardziej szczegółowej można znaleźć w dodatku \ref{app:reports}.
+
+\medskip
+
+Jak można było się spodziewać agent losowy zachowuje się najgorzej i
+nie przynosi żadnego zysku przez cały okres testowy. Algorytm A2C
+sprawuje się podobnie do algorytmu losowego, jego działanie nie możemy
+uznać za sensowne. Algorytmy z rodziny PPO pokazują o wiele lepsze
+wyniki, przy czym modyfikacja o rekurencyjną politykę wyraźnie wzmocniła
+algorytm i zwiększyła jego efektywność. Jest to naturalne, gdyż
+rozważany w ramach projektu problem jest w uproszczeniu działaniem
+na szeregach czasowych, gdzie modele rekurencyjne generalnie dobrze się
+sprawują.
+
+Wyniki te są mało satysfakcjonujące, gdyż generalnie algorytmy częściej
+tracą, niż zyskują, pomijając fakt, że prawdziwe środowiska do
+tradingu są zdecydowanie bardziej złożone.
+Stosowanie rekurencyjnej polityki jest mocno zalecane.
 
 
 \pagebreak
@@ -227,12 +285,13 @@ od sum nagród uzyskiwanych przez algorytm domyślny.
   Strategy (September 11, 2020). Available at SSRN:
   \href{https://ssrn.com/abstract=3690996}{https://ssrn.com/abstract=3690996}
   or \href{http://dx.doi.org/10.2139/ssrn.3690996}{http://dx.doi.org/10.2139/ssrn.3690996}
+  \bibitem{sharpe}  \url{https://www.investopedia.com/terms/s/sharperatio.asp}
 \end{thebibliography}
 
 \pagebreak
 \appendix
 \section{Raporty Quantstats \\
-  dla rozmiaru okna 30 oraz dyskonta 0.99}
+  dla rozmiaru okna 30 oraz dyskonta 0.99}\label{app:reports}
 
 \begin{figure}[ht!]
   \centering
